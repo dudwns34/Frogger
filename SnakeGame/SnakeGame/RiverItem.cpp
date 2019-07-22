@@ -31,7 +31,7 @@ void RiverItem::Update(const sf::Vector2f& argScreenPos)
 		if (screenPos.x < -dimensions.x)
 		{
 			isAlive = false;
-			//Reposition the vehicle
+			//Reposition the river item
 			screenPos.x = argScreenPos.x;
 		}
 	}
@@ -41,7 +41,7 @@ void RiverItem::Update(const sf::Vector2f& argScreenPos)
 		if (screenPos.x > argScreenPos.x - dimensions.x)
 		{
 			isAlive = false;
-			//Reposition the vehicle
+			//Reposition the river item
 			screenPos.x = 0.0f;
 		}
 	}

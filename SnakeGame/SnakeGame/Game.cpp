@@ -171,7 +171,30 @@ void Game::Run(sf::RenderWindow &argWindow)
 		default:
 			continue;
 		}
-	}	
+	}
+	bool oneLogAlive{ false }, oneTurtleAlive{ false };
+	for (RiverItem* riverItem : RiverItemList)
+	{
+		switch (riverItem->GetRiverItemType())
+		{
+		case ERiverItemType::eLog:
+			if (!oneLogAlive)
+			{
+				riverItem->ChangeAliveStatus();
+				oneLogAlive = true;
+			}
+			continue;
+		case ERiverItemType::eTurtle:
+			if (!oneTurtleAlive)
+			{
+				riverItem->ChangeAliveStatus();
+				oneTurtleAlive = true;
+			}
+			continue;
+		default:
+			continue;
+		}
+	}
 	// We can still output to the console window
 	std::cout << "Frogger: Starting" << std::endl;
 
@@ -197,7 +220,16 @@ void Game::Run(sf::RenderWindow &argWindow)
 		//Water displayed
 		Water(argWindow);
 		//UI Displayed
-		DisplayUI(argWindow, FrogPlayerList);		
+		DisplayUI(argWindow, FrogPlayerList);	
+		for (RiverItem* riverItem : RiverItemList)
+		{
+			if (riverItem->CheckIfAlive())
+			{
+				riverItem->Render(argWindow);
+				riverItem->Update(screenSize);
+				riverItem->Move();
+			}
+		}
 		for (Frog* player : FrogPlayerList)
 		{		
 			if (player->CheckIfAlive())
@@ -216,7 +248,7 @@ void Game::Run(sf::RenderWindow &argWindow)
 				vehicle->Update(screenSize);
 				vehicle->Move();
 			}
-		}
+		}		
 		// Get the window to display its contents
 		argWindow.display();
 		areAllDead = true;
@@ -256,7 +288,25 @@ void Game::Run(sf::RenderWindow &argWindow)
 						continue;
 					}
 				}
-			}			
+			}
+			for (RiverItem* riverItem : RiverItemList)
+			{
+				// spawn the river item with the random spawn distance
+				switch (spawnDistance)
+				{
+				case 0:
+					riverItem->SpawnRiverItem(RiverItemList, 1.0f);
+					continue;
+				case 1:
+					riverItem->SpawnRiverItem(RiverItemList, 4.0f);
+					continue;
+				case 2:
+					riverItem->SpawnRiverItem(RiverItemList, 8.0f);
+					continue;
+				default:
+					continue;
+				}
+			}
 		}			
 		
 		if (areAllDead)
@@ -268,8 +318,15 @@ void Game::Run(sf::RenderWindow &argWindow)
 			{
 				delete vehicle;
 			}
+			for (RiverItem* riverItem : RiverItemList)
+			{
+				delete riverItem;
+			}
 			break;
-		}		
+		}
+		//RiverItem* test = RiverItemList.front();
+		Vehicle* test = VehicleList.front();
+		std::cout << test->GetScreenPosition().x << std::endl;		
 	}
 
 	std::cout << "FrogGame: Finished" << std::endl;	
