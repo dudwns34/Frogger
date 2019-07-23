@@ -13,17 +13,8 @@ void Frog::Render(sf::RenderWindow& argWindow)
 {
 	if (isAlive)
 	{
-		// Create an instance of the SFML CircleShape and initialise it
-		//sf::CircleShape shape(radius);
 		sprite.setPosition(screenPos);
-		//shape.setPosition(screenPos);
-		// Set the shape's fill colour attribute
-		//shape.setFillColor(colour);
 		sprite.setScale({ 2.0f, 2.0f });
-		//shape.setOutlineThickness(10.f);
-		//shape.setOutlineColor(sf::Color(250, 150, 100));
-
-		// draw our circle shape to the window
 		argWindow.draw(sprite);
 	}
 }
@@ -32,7 +23,7 @@ void Frog::Move()
 {	
 }
 
-void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList)
+void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList)
 {	
 	//Checks if the Frog has gone off the screen
 	if (screenPos.x < -dimensions.x || screenPos.x > argScreenPos.x - dimensions.x * 2)
@@ -44,18 +35,45 @@ void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow,
 		isAlive = false;
 	}
 	//Checks if the Frog has collided with a vehicle
-	for (Vehicle* vehicle : argVehicleList)
+	if (isOnLand)
 	{
-		if (vehicle->CheckIfAlive())
+		for (Vehicle* vehicle : argVehicleList)
 		{
-			// it checks that it is within the dimensions of the vehicle
-			if (screenPos.x > vehicle->GetScreenPosition().x - vehicle->GetDimensions().x / 2.0f &&
-				screenPos.y > vehicle->GetScreenPosition().y - vehicle->GetDimensions().y  / 2.0f&&
-				screenPos.x < vehicle->GetScreenPosition().x + vehicle->GetDimensions().x  / 2.0f&&
-				screenPos.y < vehicle->GetScreenPosition().y + vehicle->GetDimensions().y / 2.0f)
-			{				
-				isAlive = false;
-				break;
+			if (vehicle->CheckIfAlive())
+			{
+				// it checks that it is within the dimensions of the vehicle
+				if (screenPos.x > vehicle->GetScreenPosition().x - vehicle->GetDimensions().x / 2.0f &&
+					screenPos.y > vehicle->GetScreenPosition().y - vehicle->GetDimensions().y / 2.0f &&
+					screenPos.x < vehicle->GetScreenPosition().x + vehicle->GetDimensions().x / 2.0f &&
+					screenPos.y < vehicle->GetScreenPosition().y + vehicle->GetDimensions().y / 2.0f)
+				{
+					isAlive = false;
+					break;
+				}
+			}
+		}
+	}	
+	else
+	{
+		//Checks if the Frog is on top of a river item
+		for (RiverItem* riverItem : argRiverItemList)
+		{
+			if (riverItem->CheckIfAlive())
+			{
+				// it checks that it is within the dimensions of the river item
+				if (screenPos.x > riverItem->GetScreenPosition().x - riverItem->GetDimensions().x / 2.0f &&
+					screenPos.y > riverItem->GetScreenPosition().y - riverItem->GetDimensions().y / 2.0f &&
+					screenPos.x < riverItem->GetScreenPosition().x + riverItem->GetDimensions().x / 2.0f &&
+					screenPos.y < riverItem->GetScreenPosition().y + riverItem->GetDimensions().y / 2.0f)
+				{
+					screenPos.x -= riverItem->GetSpeed();
+				}
+				// THE PROBLEM IS HERE
+				/*else
+				{					
+					isAlive = false;
+					break;					
+				}*/
 			}
 		}
 	}

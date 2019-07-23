@@ -21,6 +21,7 @@ public:
 	void Move();
 	void Update(const sf::Vector2f& argScreenPos);
 	ERiverItemType GetRiverItemType();
+	float GetSpeed();
 	void SpawnRiverItem(const std::list<RiverItem*>& argRiverItemList, const float& argSpawnDistance);
 };
 

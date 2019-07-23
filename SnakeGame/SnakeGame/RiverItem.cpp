@@ -53,6 +53,11 @@ ERiverItemType RiverItem::GetRiverItemType()
 	return riverItemType;
 }
 
+float RiverItem::GetSpeed()
+{
+	return speed;
+}
+
 void RiverItem::SpawnRiverItem(const std::list<RiverItem*>& argRiverItemList, const float& argSpawnDistance)
 {
 	//all vehicles are spawning at the same time

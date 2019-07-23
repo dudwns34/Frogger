@@ -47,7 +47,7 @@ void Game::Run(sf::RenderWindow &argWindow)
 		NewPlayer(FrogPlayerList, i, texture);
 	}
 
-	for (size_t i = 0; i < 50; i++)
+	for (size_t i = 0; i < 40; i++)
 	{
 		//create all the vehicles. A pool of vehicles
 		int randomType = rand() % 5;
@@ -99,10 +99,11 @@ void Game::Run(sf::RenderWindow &argWindow)
 	}
 
 	//create the pool of riverItems and spawn them just like the vehicles
-	for (size_t i = 0; i < 30; i++)
+	for (size_t i = 0; i < 50; i++)
 	{
 		//create all the river items. A pool of river items
 		int randomType = rand() % 2;
+		int randomPosition;
 		//create values for the sprite for the river items
 		sf::IntRect rectSourceSprite;	//margin is 16x16
 		sf::Sprite sprite(texture, rectSourceSprite);
@@ -113,14 +114,39 @@ void Game::Run(sf::RenderWindow &argWindow)
 			sprite = sf::Sprite(texture, rectSourceSprite);
 			sprite.setScale({ 2.0f, 2.0f });
 			sprite.setOrigin({ 24.0f, 8.0f });
-			RiverItemList.push_back(new RiverItem({ 800.0f, 276.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
+			randomPosition = rand() % 3;
+			switch (randomPosition)
+			{
+			case 0:
+				RiverItemList.push_back(new RiverItem({ 800.0f, 244.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
+				continue;
+			case 1:
+				RiverItemList.push_back(new RiverItem({ 0.0f, 212.0f }, false, sprite, { 96.0f, 32.0f }, -0.2f, ERiverItemType::eLog));
+				continue;
+			case 2:
+				RiverItemList.push_back(new RiverItem({ 800.0f, 148.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
+				continue;
+			default:
+				continue;
+			}			
 			break;
 		case 1://TURTLE
 			rectSourceSprite = sf::IntRect(432, 145, 16, 16);
 			sprite = sf::Sprite(texture, rectSourceSprite);
 			sprite.setScale({ 2.0f, 2.0f });
 			sprite.setOrigin({ 8.0f, 8.0f });
-			RiverItemList.push_back(new RiverItem({ 800.0f, 244.0f }, false, sprite, { 32.0f, 32.0f }, 0.2f, ERiverItemType::eTurtle));
+			randomPosition = rand() % 2;
+			switch (randomPosition)
+			{
+			case 0:
+				RiverItemList.push_back(new RiverItem({ 800.0f, 276.0f }, false, sprite, { 32.0f, 32.0f }, 0.2f, ERiverItemType::eTurtle));
+				continue;
+			case 1:
+				RiverItemList.push_back(new RiverItem({ 0.0f, 180.0f }, false, sprite, { 32.0f, 32.0f }, -0.2f, ERiverItemType::eTurtle));
+				continue;
+			default:
+				continue;
+			}
 			break;	
 		default:
 			break;
@@ -235,7 +261,7 @@ void Game::Run(sf::RenderWindow &argWindow)
 			if (player->CheckIfAlive())
 			{				
 				player->Render(argWindow);
-				player->Update(screenSize, argWindow, FrogPlayerList, VehicleList);	//This checks for collisions
+				player->Update(screenSize, argWindow, FrogPlayerList, VehicleList, RiverItemList);	//This checks for collisions
 				player->Move();	
 				player->ChangeToWaterSprite();
 			}						
@@ -292,20 +318,23 @@ void Game::Run(sf::RenderWindow &argWindow)
 			for (RiverItem* riverItem : RiverItemList)
 			{
 				// spawn the river item with the random spawn distance
-				switch (spawnDistance)
+				if (!riverItem->CheckIfAlive())
 				{
-				case 0:
-					riverItem->SpawnRiverItem(RiverItemList, 1.0f);
-					continue;
-				case 1:
-					riverItem->SpawnRiverItem(RiverItemList, 4.0f);
-					continue;
-				case 2:
-					riverItem->SpawnRiverItem(RiverItemList, 8.0f);
-					continue;
-				default:
-					continue;
-				}
+					switch (spawnDistance)
+					{
+					case 0:
+						riverItem->SpawnRiverItem(RiverItemList, 1.0f);
+						continue;
+					case 1:
+						riverItem->SpawnRiverItem(RiverItemList, 4.0f);
+						continue;
+					case 2:
+						riverItem->SpawnRiverItem(RiverItemList, 8.0f);
+						continue;
+					default:
+						continue;
+					}
+				}				
 			}
 		}			
 		
@@ -324,9 +353,6 @@ void Game::Run(sf::RenderWindow &argWindow)
 			}
 			break;
 		}
-		//RiverItem* test = RiverItemList.front();
-		Vehicle* test = VehicleList.front();
-		std::cout << test->GetScreenPosition().x << std::endl;		
 	}
 
 	std::cout << "FrogGame: Finished" << std::endl;	
@@ -674,8 +700,8 @@ void Game::Water(sf::RenderWindow &argWindow)
 	//Render the water
 
 	// Create an instance of the SFML RectangleShape and initialise it
-	sf::RectangleShape shape({800.0f, 232.0f});
-	shape.setPosition(0.0f, 60.0f);
+	sf::RectangleShape shape({800.0f, 168.0f});
+	shape.setPosition(0.0f, 124.0f);
 	// Set the shape's fill colour attribute
 	shape.setFillColor(sf::Color(0, 0, 71));
 	argWindow.draw(shape);

@@ -159,7 +159,7 @@ void AI::NewSegment(const int &argFoodValue)
 	closestFoodDistance = 9999;
 }
 
-void AI::Update(const sf::Vector2f & argScreenPos, sf::RenderWindow & argWindow, const std::list<Frog*>& argFrogPlayerList, const std::list<Vehicle*> &argVehicleList)
+void AI::Update(const sf::Vector2f & argScreenPos, sf::RenderWindow & argWindow, const std::list<Frog*>& argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList)
 {
 	//Checks if the Frog has gone off the screen
 	if (screenPos.x < -dimensions.x || screenPos.x > argScreenPos.x - dimensions.x * 2)

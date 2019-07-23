@@ -1,6 +1,7 @@
 #pragma once
 #include "Shape.h"
 #include "Vehicle.h"
+#include "RiverItem.h"
 #include "Food.h"
 #include <list>
 
@@ -27,7 +28,7 @@ public:
 	virtual void Render(sf::RenderWindow& argWindow) override;
 
 	virtual void Move() = 0;
-	virtual void Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList);
+	virtual void Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList);
 	void GameOver(sf::RenderWindow& argWindow);
 	virtual void NewSegment(const int &argFoodValue);
 	int GetScore();	

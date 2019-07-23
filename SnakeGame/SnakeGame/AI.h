@@ -18,6 +18,6 @@ public:
 	void SelectClosestFood(Food &argFoodIndividual, const int& argFoodID) override;	
 	virtual void MoveToClosestFood(Food* argFoodArray[5], const std::list<Frog*> &argFrogPlayerList, const float& argWaterLimit) override;
 	virtual void NewSegment(const int &argFoodValue) override;
-	virtual void Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList) override;
+	virtual void Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList) override;
 };
 
