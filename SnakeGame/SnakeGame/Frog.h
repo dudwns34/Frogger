@@ -19,7 +19,9 @@ class Frog : public Shape
 protected:
 	int animationFrameLeft{ 0 };
 	bool isOnLand{ true };
+	bool isDrowning{ false };
 	int Score{ 0 };
+	int Lives{ 3 };
 	EDirection direction = EDirection::eNorth;
 
 public:
@@ -28,10 +30,12 @@ public:
 	virtual void Render(sf::RenderWindow& argWindow) override;
 
 	virtual void Move() = 0;
-	virtual void Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList);
+	virtual void Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList, int &argTimeLeft);
+	void LoseALife();
 	void GameOver(sf::RenderWindow& argWindow);
 	virtual void NewSegment(const int &argFoodValue);
 	int GetScore();	
+	int GetLives();
 
 	void DoAnimation();
 	void ChangeToWaterSprite();

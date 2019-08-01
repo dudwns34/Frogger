@@ -23,16 +23,16 @@ void Frog::Move()
 {	
 }
 
-void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList)
+void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow, const std::list<Frog*> &argFrogPlayerList, const std::list<Vehicle*> &argVehicleList, const std::list<RiverItem*> &argRiverItemList, int &argTimeLeft)
 {	
 	//Checks if the Frog has gone off the screen
 	if (screenPos.x < -dimensions.x || screenPos.x > argScreenPos.x - dimensions.x * 2)
 	{
-		isAlive = false;
+		LoseALife();
 	}
 	if (screenPos.y < 0 || screenPos.y > argScreenPos.y - dimensions.y * 2)
 	{
-		isAlive = false;
+		LoseALife();
 	}
 	//Checks if the Frog has collided with a vehicle
 	if (isOnLand)
@@ -46,8 +46,8 @@ void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow,
 					screenPos.y > vehicle->GetScreenPosition().y - vehicle->GetDimensions().y / 2.0f &&
 					screenPos.x < vehicle->GetScreenPosition().x + vehicle->GetDimensions().x / 2.0f &&
 					screenPos.y < vehicle->GetScreenPosition().y + vehicle->GetDimensions().y / 2.0f)
-				{
-					isAlive = false;
+				{					
+					LoseALife();
 					break;
 				}
 			}
@@ -55,27 +55,30 @@ void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow,
 	}	
 	else
 	{
-		//Checks if the Frog is on top of a river item
-		for (RiverItem* riverItem : argRiverItemList)
+		if (!isDrowning)
 		{
-			if (riverItem->CheckIfAlive())
+			//Checks if the Frog is on top of a river item
+			for (RiverItem* riverItem : argRiverItemList)
 			{
-				// it checks that it is within the dimensions of the river item
-				if (screenPos.x > riverItem->GetScreenPosition().x - riverItem->GetDimensions().x / 2.0f &&
-					screenPos.y > riverItem->GetScreenPosition().y - riverItem->GetDimensions().y / 2.0f &&
-					screenPos.x < riverItem->GetScreenPosition().x + riverItem->GetDimensions().x / 2.0f &&
-					screenPos.y < riverItem->GetScreenPosition().y + riverItem->GetDimensions().y / 2.0f)
+				if (riverItem->CheckIfAlive())
 				{
-					screenPos.x -= riverItem->GetSpeed();
+					// it checks that it is within the dimensions of the river item
+					if (screenPos.x > riverItem->GetScreenPosition().x - riverItem->GetDimensions().x / 2.0f &&
+						screenPos.y > riverItem->GetScreenPosition().y - riverItem->GetDimensions().y / 2.0f &&
+						screenPos.x < riverItem->GetScreenPosition().x + riverItem->GetDimensions().x / 2.0f &&
+						screenPos.y < riverItem->GetScreenPosition().y + riverItem->GetDimensions().y / 2.0f)
+					{
+						screenPos.x -= riverItem->GetSpeed();
+						isDrowning = false;
+						break;
+					}					
+					else
+					{
+						isDrowning = true;
+					}
 				}
-				// THE PROBLEM IS HERE
-				/*else
-				{					
-					isAlive = false;
-					break;					
-				}*/
 			}
-		}
+		}		
 	}
 	//Checks if the Frog has collided with other Frog
 	//loop through every Frog 
@@ -89,16 +92,37 @@ void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow,
 				//checks if it collided
 				if (screenPos == player->GetScreenPosition())
 				{
-					isAlive = false;
+					LoseALife();
 					break;
 				}
 			}
 		}
 	}
+	if (isDrowning)
+	{
+		LoseALife();
+		isDrowning = false;
+	}	
+	if (Lives == 0)
+	{
+		isAlive = false;
+	}
 	if (!isAlive)
 	{
 		GameOver(argWindow);
 	}
+	if (screenPos.y == 116.0f)
+	{
+		screenPos = { 400.0f, 500.0f };
+		Score += argTimeLeft;
+		argTimeLeft = 100;
+	}
+}
+
+void Frog::LoseALife()
+{
+	Lives -= 1;
+	screenPos = { 400.0f, 500.0f };
 }
 
 void Frog::GameOver(sf::RenderWindow& argWindow)
@@ -114,6 +138,11 @@ void Frog::NewSegment(const int &argFoodValue)
 int Frog::GetScore()
 {
 	return Score;
+}
+
+int Frog::GetLives()
+{
+	return Lives;
 }
 
 void Frog::DoAnimation()
@@ -154,6 +183,14 @@ void Frog::ChangeToWaterSprite()
 		isOnLand = false;
 	}
 	else if (screenPos.y >= 308.0f && !isOnLand)
+	{
+		sf::IntRect sourceSprite = sprite.getTextureRect();
+		sourceSprite.left = 64;
+		sprite.setTextureRect(sourceSprite);
+		sprite.setOrigin({ 8.0f, 8.0f });
+		isOnLand = true;
+	}
+	else if (screenPos.y <= 116.0f && !isOnLand)
 	{
 		sf::IntRect sourceSprite = sprite.getTextureRect();
 		sourceSprite.left = 64;

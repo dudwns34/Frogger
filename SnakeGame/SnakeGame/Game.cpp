@@ -6,8 +6,7 @@ Game::Game()
 { 
 	//this can be changed later to get rid of magic numbers
 	screenSize = { 800.0f, 600.0f };
-	srand(static_cast<unsigned int>(time(0)));		
-
+	srand(static_cast<unsigned int>(time(0)));
 }
 
 Game::~Game()
@@ -41,119 +40,172 @@ void Game::Run(sf::RenderWindow &argWindow)
 	texture.loadFromFile("GeneralRip.png");
 	
 	masterClock.restart();
+	timeClock.restart();
 	for (int i = 0; i < 1; i++)
 	{
 		//Add a new player frog. One for now
 		NewPlayer(FrogPlayerList, i, texture);
 	}
 
-	for (size_t i = 0; i < 40; i++)
-	{
-		//create all the vehicles. A pool of vehicles
-		int randomType = rand() % 5;
-		//create values for the sprite for the vehicles
-		sf::IntRect rectSourceSprite;	//margin is 16x16
-		sf::Sprite sprite(texture, rectSourceSprite);
-		switch (randomType)
-		{
-		// these following ones will be going from right to left
-		case 0:	//TRUCK	
-			rectSourceSprite = sf::IntRect(66, 336, 32, 16);
-			sprite = sf::Sprite(texture, rectSourceSprite);
-			sprite.setScale({ 2.0f, 2.0f });
-			sprite.setOrigin({ 16.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 800.0f, 372.0f }, false, sprite, { 64.0f, 32.0f }, 0.2f, EVehicleType::eTruck));
-			break;
-		case 1:	//RACING CAR
-			rectSourceSprite = sf::IntRect(40, 336, 16, 16);
-			sprite = sf::Sprite(texture, rectSourceSprite);
-			sprite.setScale({ 2.0f, 2.0f });
-			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 800.0f, 404.0f }, false, sprite, { 32.0f, 32.0f }, 0.4f, EVehicleType::eRacingCar));
-			break;
-		case 2:	//STANDARD CAR
-			rectSourceSprite = sf::IntRect(104, 336, 16, 16);
-			sprite = sf::Sprite(texture, rectSourceSprite);
-			sprite.setScale({ 2.0f, 2.0f });
-			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 800.0f, 468.0f }, false, sprite, { 32.0f, 32.0f }, 0.3f, EVehicleType::eStandardCar));
-			break;
-		// these following ones will be going from left to right
-		case 3: //BIG WHEEL CAR
-			rectSourceSprite = sf::IntRect(128, 336, 16, 16);
-			sprite = sf::Sprite(texture, rectSourceSprite);
-			sprite.setScale({ 2.0f, 2.0f });
-			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 0.0f, 436.0f }, false, sprite, { 32.0f, 32.0f }, -0.2f, EVehicleType::eBigWheelCar));
-			break;
-		case 4: //YELLOW CAR
-			rectSourceSprite = sf::IntRect(16, 336, 16, 16);
-			sprite = sf::Sprite(texture, rectSourceSprite);
-			sprite.setScale({ 2.0f, 2.0f });
-			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 0.0f, 340.0f }, false, sprite, { 32.0f, 32.0f }, -0.3f, EVehicleType::eYellowCar));
-			break;
-		default:
-			break;
-		}		
-	}
+	CreatePoolOfObjects(texture);
 
-	//create the pool of riverItems and spawn them just like the vehicles
-	for (size_t i = 0; i < 50; i++)
+	//for the initial cars when run is initiated. Only one of each will be set to alive.
+	InitialObjectSpawn();
+	// We can still output to the console window
+	std::cout << "Frogger: Starting" << std::endl;
+
+	// Main loop that continues until we call window.close()
+	while (argWindow.isOpen())
 	{
-		//create all the river items. A pool of river items
-		int randomType = rand() % 2;
-		int randomPosition;
-		//create values for the sprite for the river items
-		sf::IntRect rectSourceSprite;	//margin is 16x16
-		sf::Sprite sprite(texture, rectSourceSprite);
-		switch (randomType)
+		// Handle any pending SFML events
+		// These cover keyboard, mouse,joystick etc.
+		sf::Event event;
+		while (argWindow.pollEvent(event))
 		{
-		case 0://LOG
-			rectSourceSprite = sf::IntRect(496, 304, 48, 16);
-			sprite = sf::Sprite(texture, rectSourceSprite);
-			sprite.setScale({ 2.0f, 2.0f });
-			sprite.setOrigin({ 24.0f, 8.0f });
-			randomPosition = rand() % 3;
-			switch (randomPosition)
+			switch (event.type)
 			{
-			case 0:
-				RiverItemList.push_back(new RiverItem({ 800.0f, 244.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
-				continue;
-			case 1:
-				RiverItemList.push_back(new RiverItem({ 0.0f, 212.0f }, false, sprite, { 96.0f, 32.0f }, -0.2f, ERiverItemType::eLog));
-				continue;
-			case 2:
-				RiverItemList.push_back(new RiverItem({ 800.0f, 148.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
-				continue;
+			case sf::Event::Closed:
+				argWindow.close();
+				break;
 			default:
-				continue;
-			}			
-			break;
-		case 1://TURTLE
-			rectSourceSprite = sf::IntRect(432, 145, 16, 16);
-			sprite = sf::Sprite(texture, rectSourceSprite);
-			sprite.setScale({ 2.0f, 2.0f });
-			sprite.setOrigin({ 8.0f, 8.0f });
-			randomPosition = rand() % 2;
-			switch (randomPosition)
-			{
-			case 0:
-				RiverItemList.push_back(new RiverItem({ 800.0f, 276.0f }, false, sprite, { 32.0f, 32.0f }, 0.2f, ERiverItemType::eTurtle));
-				continue;
-			case 1:
-				RiverItemList.push_back(new RiverItem({ 0.0f, 180.0f }, false, sprite, { 32.0f, 32.0f }, -0.2f, ERiverItemType::eTurtle));
-				continue;
-			default:
-				continue;
+				break;
 			}
-			break;	
-		default:
+		}
+		// We must clear the window each time around the loop
+		argWindow.clear();		
+		//Water displayed
+		Water(argWindow);
+		//UI Displayed
+		DisplayUI(argWindow, FrogPlayerList);	
+		for (RiverItem* riverItem : RiverItemList)
+		{
+			if (riverItem->CheckIfAlive())
+			{
+				riverItem->Render(argWindow);
+				riverItem->Update(screenSize);
+				riverItem->Move();
+			}
+		}
+		for (Frog* player : FrogPlayerList)
+		{		
+			if (player->CheckIfAlive())
+			{				
+				player->Render(argWindow);
+				player->Update(screenSize, argWindow, FrogPlayerList, VehicleList, RiverItemList, TimeLeft);	//This checks for collisions
+				player->Move();	
+				player->ChangeToWaterSprite();
+			}						
+		}	
+		for (Vehicle* vehicle : VehicleList)
+		{
+			if (vehicle->CheckIfAlive())
+			{
+				vehicle->Render(argWindow);
+				vehicle->Update(screenSize);
+				vehicle->Move();
+			}
+		}		
+		// Get the window to display its contents
+		argWindow.display();
+		areAllDead = true;
+		for (Frog* player : FrogPlayerList)
+		{			
+			if (player->CheckIfAlive())
+			{
+				areAllDead = false;
+			}
+		}		
+		if (masterClock.getElapsedTime().asMilliseconds() > 500)
+		{
+			for (Frog* player : FrogPlayerList)
+			{
+				player->DoAnimation();
+			}
+			//Every half a seconds change the spawnDistance value
+			int spawnDistance = rand() % 3;			
+			SpawnNewObject(spawnDistance);
+			masterClock.restart();
+		}
+		if (timeClock.getElapsedTime().asMilliseconds() > 1000)
+		{
+			TimeLeft -= 1;
+			if (TimeLeft == 0)
+			{
+				TimeLeft = 100;
+			}
+			timeClock.restart();
+		}	
+		
+		if (areAllDead)
+		{
+			//change the state to game over
+			m_currentState = EGameState::eGameOver;				
+			argWindow.clear();
+			for (Vehicle* vehicle : VehicleList)
+			{
+				delete vehicle;
+			}
+			for (RiverItem* riverItem : RiverItemList)
+			{
+				delete riverItem;
+			}
+			VehicleList.clear();
+			RiverItemList.clear();
 			break;
 		}
 	}
 
-	//for the initial cars when run is initiated. Only one of each will be set to alive.
+	std::cout << "FrogGame: Finished" << std::endl;	
+}
+
+void Game::SpawnNewObject(int spawnDistance)
+{
+	for (Vehicle* vehicle : VehicleList)
+	{
+		if (!vehicle->CheckIfAlive())
+		{
+			// spawn the vehicle with the random spawn distance
+			switch (spawnDistance)
+			{
+			case 0:
+				vehicle->SpawnVehicle(VehicleList, 1.0f);
+				continue;
+			case 1:
+				vehicle->SpawnVehicle(VehicleList, 4.0f);
+				continue;
+			case 2:
+				vehicle->SpawnVehicle(VehicleList, 8.0f);
+				continue;
+			default:
+				continue;
+			}
+		}
+	}
+	for (RiverItem* riverItem : RiverItemList)
+	{
+		// spawn the river item with the random spawn distance
+		if (!riverItem->CheckIfAlive())
+		{
+			switch (spawnDistance)
+			{
+			case 0:
+				riverItem->SpawnRiverItem(RiverItemList, 1.0f);
+				continue;
+			case 1:
+				riverItem->SpawnRiverItem(RiverItemList, 4.0f);
+				continue;
+			case 2:
+				riverItem->SpawnRiverItem(RiverItemList, 8.0f);
+				continue;
+			default:
+				continue;
+			}
+		}
+	}
+}
+
+void Game::InitialObjectSpawn()
+{
 	bool oneTruckAlive{ false }, oneRacingAlive{ false }, oneStandardAlive{ false }, oneBigWheelAlive{ false }, oneYellowAlive{ false };
 	for (Vehicle* vehicle : VehicleList)
 	{
@@ -221,141 +273,115 @@ void Game::Run(sf::RenderWindow &argWindow)
 			continue;
 		}
 	}
-	// We can still output to the console window
-	std::cout << "Frogger: Starting" << std::endl;
+}
 
-	// Main loop that continues until we call window.close()
-	while (argWindow.isOpen())
+void Game::CreatePoolOfObjects(sf::Texture& texture)
+{
+	for (size_t i = 0; i < 40; i++)
 	{
-		// Handle any pending SFML events
-		// These cover keyboard, mouse,joystick etc.
-		sf::Event event;
-		while (argWindow.pollEvent(event))
+		//create all the vehicles. A pool of vehicles
+		int randomType = rand() % 5;
+		//create values for the sprite for the vehicles
+		sf::IntRect rectSourceSprite;	//margin is 16x16
+		sf::Sprite sprite(texture, rectSourceSprite);
+		switch (randomType)
 		{
-			switch (event.type)
-			{
-			case sf::Event::Closed:
-				argWindow.close();
-				break;
-			default:
-				break;
-			}
-		}
-		// We must clear the window each time around the loop
-		argWindow.clear();		
-		//Water displayed
-		Water(argWindow);
-		//UI Displayed
-		DisplayUI(argWindow, FrogPlayerList);	
-		for (RiverItem* riverItem : RiverItemList)
-		{
-			if (riverItem->CheckIfAlive())
-			{
-				riverItem->Render(argWindow);
-				riverItem->Update(screenSize);
-				riverItem->Move();
-			}
-		}
-		for (Frog* player : FrogPlayerList)
-		{		
-			if (player->CheckIfAlive())
-			{				
-				player->Render(argWindow);
-				player->Update(screenSize, argWindow, FrogPlayerList, VehicleList, RiverItemList);	//This checks for collisions
-				player->Move();	
-				player->ChangeToWaterSprite();
-			}						
-		}	
-		for (Vehicle* vehicle : VehicleList)
-		{
-			if (vehicle->CheckIfAlive())
-			{
-				vehicle->Render(argWindow);
-				vehicle->Update(screenSize);
-				vehicle->Move();
-			}
-		}		
-		// Get the window to display its contents
-		argWindow.display();
-		areAllDead = true;
-		for (Frog* player : FrogPlayerList)
-		{			
-			if (player->CheckIfAlive())
-			{
-				areAllDead = false;
-			}
-		}		
-		if (masterClock.getElapsedTime().asMilliseconds() > 500)
-		{
-			for (Frog* player : FrogPlayerList)
-			{
-				player->DoAnimation();
-			}
-			//Every half a seconds change the spawnDistance value
-			int spawnDistance = rand() % 3;
-			masterClock.restart();
-			for (Vehicle* vehicle : VehicleList)
-			{
-				if (!vehicle->CheckIfAlive())
-				{
-					// spawn the vehicle with the random spawn distance
-					switch (spawnDistance)
-					{
-					case 0:
-						vehicle->SpawnVehicle(VehicleList, 1.0f);
-						continue;
-					case 1:
-						vehicle->SpawnVehicle(VehicleList, 4.0f);
-						continue;
-					case 2:
-						vehicle->SpawnVehicle(VehicleList, 8.0f);
-						continue;
-					default:
-						continue;
-					}
-				}
-			}
-			for (RiverItem* riverItem : RiverItemList)
-			{
-				// spawn the river item with the random spawn distance
-				if (!riverItem->CheckIfAlive())
-				{
-					switch (spawnDistance)
-					{
-					case 0:
-						riverItem->SpawnRiverItem(RiverItemList, 1.0f);
-						continue;
-					case 1:
-						riverItem->SpawnRiverItem(RiverItemList, 4.0f);
-						continue;
-					case 2:
-						riverItem->SpawnRiverItem(RiverItemList, 8.0f);
-						continue;
-					default:
-						continue;
-					}
-				}				
-			}
-		}			
-		
-		if (areAllDead)
-		{
-			//change the state to game over
-			m_currentState = EGameState::eGameOver;				
-			argWindow.clear();
-			for (Vehicle* vehicle : VehicleList)
-			{
-				delete vehicle;
-			}
-			for (RiverItem* riverItem : RiverItemList)
-			{
-				delete riverItem;
-			}
+			// these following ones will be going from right to left
+		case 0:	//TRUCK	
+			rectSourceSprite = sf::IntRect(66, 336, 32, 16);
+			sprite = sf::Sprite(texture, rectSourceSprite);
+			sprite.setScale({ 2.0f, 2.0f });
+			sprite.setOrigin({ 16.0f, 8.0f });
+			VehicleList.push_back(new Vehicle({ 800.0f, 372.0f }, false, sprite, { 64.0f, 32.0f }, 0.2f, EVehicleType::eTruck));
+			break;
+		case 1:	//RACING CAR
+			rectSourceSprite = sf::IntRect(40, 336, 16, 16);
+			sprite = sf::Sprite(texture, rectSourceSprite);
+			sprite.setScale({ 2.0f, 2.0f });
+			sprite.setOrigin({ 8.0f, 8.0f });
+			VehicleList.push_back(new Vehicle({ 800.0f, 404.0f }, false, sprite, { 32.0f, 32.0f }, 0.4f, EVehicleType::eRacingCar));
+			break;
+		case 2:	//STANDARD CAR
+			rectSourceSprite = sf::IntRect(104, 336, 16, 16);
+			sprite = sf::Sprite(texture, rectSourceSprite);
+			sprite.setScale({ 2.0f, 2.0f });
+			sprite.setOrigin({ 8.0f, 8.0f });
+			VehicleList.push_back(new Vehicle({ 800.0f, 468.0f }, false, sprite, { 32.0f, 32.0f }, 0.3f, EVehicleType::eStandardCar));
+			break;
+			// these following ones will be going from left to right
+		case 3: //BIG WHEEL CAR
+			rectSourceSprite = sf::IntRect(128, 336, 16, 16);
+			sprite = sf::Sprite(texture, rectSourceSprite);
+			sprite.setScale({ 2.0f, 2.0f });
+			sprite.setOrigin({ 8.0f, 8.0f });
+			VehicleList.push_back(new Vehicle({ 0.0f, 436.0f }, false, sprite, { 32.0f, 32.0f }, -0.2f, EVehicleType::eBigWheelCar));
+			break;
+		case 4: //YELLOW CAR
+			rectSourceSprite = sf::IntRect(16, 336, 16, 16);
+			sprite = sf::Sprite(texture, rectSourceSprite);
+			sprite.setScale({ 2.0f, 2.0f });
+			sprite.setOrigin({ 8.0f, 8.0f });
+			VehicleList.push_back(new Vehicle({ 0.0f, 340.0f }, false, sprite, { 32.0f, 32.0f }, -0.3f, EVehicleType::eYellowCar));
+			break;
+		default:
 			break;
 		}
 	}
 
-	std::cout << "FrogGame: Finished" << std::endl;	
+	//create the pool of riverItems and spawn them just like the vehicles
+	for (size_t i = 0; i < 50; i++)
+	{
+		//create all the river items. A pool of river items
+		int randomType = rand() % 2;
+		int randomPosition;
+		//create values for the sprite for the river items
+		sf::IntRect rectSourceSprite;	//margin is 16x16
+		sf::Sprite sprite(texture, rectSourceSprite);
+		switch (randomType)
+		{
+		case 0://LOG
+			rectSourceSprite = sf::IntRect(496, 304, 48, 16);
+			sprite = sf::Sprite(texture, rectSourceSprite);
+			sprite.setScale({ 2.0f, 2.0f });
+			sprite.setOrigin({ 24.0f, 8.0f });
+			randomPosition = rand() % 3;
+			switch (randomPosition)
+			{
+			case 0:
+				RiverItemList.push_back(new RiverItem({ 800.0f, 244.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
+				continue;
+			case 1:
+				RiverItemList.push_back(new RiverItem({ 0.0f, 212.0f }, false, sprite, { 96.0f, 32.0f }, -0.2f, ERiverItemType::eLog));
+				continue;
+			case 2:
+				RiverItemList.push_back(new RiverItem({ 800.0f, 148.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
+				continue;
+			default:
+				continue;
+			}
+			break;
+		case 1://TURTLE
+			rectSourceSprite = sf::IntRect(432, 145, 16, 16);
+			sprite = sf::Sprite(texture, rectSourceSprite);
+			sprite.setScale({ 2.0f, 2.0f });
+			sprite.setOrigin({ 8.0f, 8.0f });
+			randomPosition = rand() % 2;
+			switch (randomPosition)
+			{
+			case 0:
+				RiverItemList.push_back(new RiverItem({ 800.0f, 276.0f }, false, sprite, { 32.0f, 32.0f }, 0.2f, ERiverItemType::eTurtle));
+				continue;
+			case 1:
+				RiverItemList.push_back(new RiverItem({ 0.0f, 180.0f }, false, sprite, { 32.0f, 32.0f }, -0.2f, ERiverItemType::eTurtle));
+				continue;
+			default:
+				continue;
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
@@ -654,8 +680,19 @@ void Game::DisplayUI(sf::RenderWindow &argWindow, const std::list<Frog*> &argFro
 	}
 	//Create the text needed
 	int playerCount = 0;
+	sf::Text textTime;
 	sf::Text textPlayerName[1];
 	sf::Text textScore[1];
+	sf::Text textLives[1];
+
+	//Create a textTime
+	textTime.setFont(font);
+	textTime.setCharacterSize(15);
+	textTime.setStyle(sf::Text::Regular);
+	textTime.setFillColor(sf::Color::Green);
+	textTime.setString("Time: " + std::to_string(TimeLeft));
+	textTime.setPosition(560.0f, 560.0f);
+
 	for (Frog* player : argFrogPlayerList)		
 	{	
 		//Create a textPlayerName
@@ -689,8 +726,26 @@ void Game::DisplayUI(sf::RenderWindow &argWindow, const std::list<Frog*> &argFro
 		default:
 			break;
 		}
+
+		//Create a textLives
+		textLives[playerCount].setFont(font);
+		textLives[playerCount].setString("Lives: " + std::to_string(player->GetLives()));
+		textLives[playerCount].setCharacterSize(15);
+		textLives[playerCount].setStyle(sf::Text::Regular);
+		textLives[playerCount].setFillColor(sf::Color::Green);	//This should be given by the player class
+		switch (playerCount)
+		{
+		case 0:
+			textLives[playerCount].setPosition(0.0f, 40.0f);
+			break;
+		default:
+			break;
+		}
+
+		argWindow.draw(textTime);
 		argWindow.draw(textPlayerName[playerCount]);
 		argWindow.draw(textScore[playerCount]);
+		argWindow.draw(textLives[playerCount]);
 		playerCount += 1;
 	}
 }

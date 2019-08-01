@@ -23,6 +23,8 @@ private:
 	//these values are constant most likely
 	sf::Vector2f screenSize;
 	sf::Clock masterClock;
+	sf::Clock timeClock;
+	int TimeLeft{ 100 };
 
 	bool areAllDead{ false };
 
@@ -38,7 +40,11 @@ public:
 	void ChangeState(bool& argPlayGame);
 
 	//Consider the enum for the different screen modes (main menu, game, game over)
-	void Run(sf::RenderWindow &argWindow);	
+	void Run(sf::RenderWindow &argWindow);
+	void SpawnNewObject(int spawnDistance);
+	void InitialObjectSpawn();
+	void CreatePoolOfObjects(sf::Texture& texture);
+
 	void DisplayMainMenu(sf::RenderWindow &argWindow);
 	bool DisplayGameOver(sf::RenderWindow &argWindow);
 	
