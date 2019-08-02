@@ -25,7 +25,7 @@ void RiverItem::Move()
 
 void RiverItem::Update(const sf::Vector2f& argScreenPos)
 {
-	if (speed > 0)
+	if (speed > 0.0f)
 	{
 		//THESE GO TO THE LEFT
 		if (screenPos.x < -dimensions.x)
@@ -35,7 +35,7 @@ void RiverItem::Update(const sf::Vector2f& argScreenPos)
 			screenPos.x = argScreenPos.x;
 		}
 	}
-	else if (speed < 0)
+	else if (speed < 0.0f)
 	{
 		//THESE GO TO THE RIGHT
 		if (screenPos.x > argScreenPos.x - dimensions.x)

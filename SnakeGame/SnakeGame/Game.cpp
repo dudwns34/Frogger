@@ -292,21 +292,21 @@ void Game::CreatePoolOfObjects(sf::Texture& texture)
 			sprite = sf::Sprite(texture, rectSourceSprite);
 			sprite.setScale({ 2.0f, 2.0f });
 			sprite.setOrigin({ 16.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 800.0f, 372.0f }, false, sprite, { 64.0f, 32.0f }, 0.2f, EVehicleType::eTruck));
+			VehicleList.push_back(new Vehicle({ 800.0f, 372.0f }, false, sprite, { 64.0f, 32.0f }, 0.3f, EVehicleType::eTruck));
 			break;
 		case 1:	//RACING CAR
 			rectSourceSprite = sf::IntRect(40, 336, 16, 16);
 			sprite = sf::Sprite(texture, rectSourceSprite);
 			sprite.setScale({ 2.0f, 2.0f });
 			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 800.0f, 404.0f }, false, sprite, { 32.0f, 32.0f }, 0.4f, EVehicleType::eRacingCar));
+			VehicleList.push_back(new Vehicle({ 800.0f, 404.0f }, false, sprite, { 32.0f, 32.0f }, 0.6f, EVehicleType::eRacingCar));
 			break;
 		case 2:	//STANDARD CAR
 			rectSourceSprite = sf::IntRect(104, 336, 16, 16);
 			sprite = sf::Sprite(texture, rectSourceSprite);
 			sprite.setScale({ 2.0f, 2.0f });
 			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 800.0f, 468.0f }, false, sprite, { 32.0f, 32.0f }, 0.3f, EVehicleType::eStandardCar));
+			VehicleList.push_back(new Vehicle({ 800.0f, 468.0f }, false, sprite, { 32.0f, 32.0f }, 0.5f, EVehicleType::eStandardCar));
 			break;
 			// these following ones will be going from left to right
 		case 3: //BIG WHEEL CAR
@@ -314,14 +314,14 @@ void Game::CreatePoolOfObjects(sf::Texture& texture)
 			sprite = sf::Sprite(texture, rectSourceSprite);
 			sprite.setScale({ 2.0f, 2.0f });
 			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 0.0f, 436.0f }, false, sprite, { 32.0f, 32.0f }, -0.2f, EVehicleType::eBigWheelCar));
+			VehicleList.push_back(new Vehicle({ 0.0f, 436.0f }, false, sprite, { 32.0f, 32.0f }, -0.3f, EVehicleType::eBigWheelCar));
 			break;
 		case 4: //YELLOW CAR
 			rectSourceSprite = sf::IntRect(16, 336, 16, 16);
 			sprite = sf::Sprite(texture, rectSourceSprite);
 			sprite.setScale({ 2.0f, 2.0f });
 			sprite.setOrigin({ 8.0f, 8.0f });
-			VehicleList.push_back(new Vehicle({ 0.0f, 340.0f }, false, sprite, { 32.0f, 32.0f }, -0.3f, EVehicleType::eYellowCar));
+			VehicleList.push_back(new Vehicle({ 0.0f, 340.0f }, false, sprite, { 32.0f, 32.0f }, -0.4f, EVehicleType::eYellowCar));
 			break;
 		default:
 			break;
@@ -348,13 +348,13 @@ void Game::CreatePoolOfObjects(sf::Texture& texture)
 			switch (randomPosition)
 			{
 			case 0:
-				RiverItemList.push_back(new RiverItem({ 800.0f, 244.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
+				RiverItemList.push_back(new RiverItem({ 800.0f, 244.0f }, false, sprite, { 96.0f, 32.0f }, 0.5f, ERiverItemType::eLog));
 				continue;
 			case 1:
-				RiverItemList.push_back(new RiverItem({ 0.0f, 212.0f }, false, sprite, { 96.0f, 32.0f }, -0.2f, ERiverItemType::eLog));
+				RiverItemList.push_back(new RiverItem({ 0.0f, 212.0f }, false, sprite, { 96.0f, 32.0f }, -0.3f, ERiverItemType::eLog));
 				continue;
 			case 2:
-				RiverItemList.push_back(new RiverItem({ 800.0f, 148.0f }, false, sprite, { 96.0f, 32.0f }, 0.2f, ERiverItemType::eLog));
+				RiverItemList.push_back(new RiverItem({ 800.0f, 148.0f }, false, sprite, { 96.0f, 32.0f }, 0.3f, ERiverItemType::eLog));
 				continue;
 			default:
 				continue;
@@ -369,9 +369,11 @@ void Game::CreatePoolOfObjects(sf::Texture& texture)
 			switch (randomPosition)
 			{
 			case 0:
-				RiverItemList.push_back(new RiverItem({ 800.0f, 276.0f }, false, sprite, { 32.0f, 32.0f }, 0.2f, ERiverItemType::eTurtle));
+
+				RiverItemList.push_back(new RiverItem({ 800.0f, 276.0f }, false, sprite, { 32.0f, 32.0f }, 0.4f, ERiverItemType::eTurtle));
 				continue;
 			case 1:
+				sprite.setRotation(180.0f);
 				RiverItemList.push_back(new RiverItem({ 0.0f, 180.0f }, false, sprite, { 32.0f, 32.0f }, -0.2f, ERiverItemType::eTurtle));
 				continue;
 			default:
@@ -386,6 +388,19 @@ void Game::CreatePoolOfObjects(sf::Texture& texture)
 
 void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
 {
+	bool displayHighscore{ false };	
+	//Open Highscore text
+	std::ifstream readFile;
+	int topScore{-1};
+	readFile.open("Highscore.txt");
+	if (readFile.is_open())
+	{
+		while (!readFile.eof())
+		{
+			readFile >> topScore;
+		}
+	}
+	readFile.close();
 	//Declare and load a font
 	sf::Font font;	
 	//it has a problem loading the text!!
@@ -395,7 +410,7 @@ void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
 	}
 	sf::Clock clock;
 	//Create a textTitle and tip
-	sf::Text textTitle, textTip;
+	sf::Text textTitle, textTip, textHighscore, textControls;
 	textTitle.setFont(font);
 	textTitle.setString("FROGGER");
 	textTitle.setCharacterSize(30);
@@ -409,6 +424,20 @@ void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
 	textTip.setStyle(sf::Text::Regular);
 	textTip.setFillColor(sf::Color(255, 165, 0));
 	textTip.setPosition(100.0f, 500.0f);
+
+	textHighscore.setFont(font);
+	textHighscore.setString("Highscore: " + std::to_string(topScore));
+	textHighscore.setCharacterSize(18);
+	textHighscore.setStyle(sf::Text::Regular);
+	textHighscore.setFillColor(sf::Color::Green);
+	textHighscore.setPosition(250.0f, 350.0f);
+
+	textControls.setFont(font);
+	textControls.setString("Controls: WASD (movement)");
+	textControls.setCharacterSize(18);
+	textControls.setStyle(sf::Text::Regular);
+	textControls.setFillColor(sf::Color::Green);
+	textControls.setPosition(150.0f, 450.0f);
 
 	//create a sprite
 	sf::Texture texture;
@@ -472,6 +501,7 @@ void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
 					if (optionIndex < 0) { optionIndex = noOfOptions - 1; }
 					textOptions[optionIndex].setOutlineColor(sf::Color::White);
 					textOptions[optionIndex].setOutlineThickness(2.0f);
+					if (optionIndex != 1) { displayHighscore = false; }
 					continue;
 				case sf::Keyboard::S:
 					textOptions[optionIndex].setOutlineThickness(0.0f);
@@ -479,14 +509,16 @@ void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
 					if (optionIndex > noOfOptions - 1) { optionIndex = 0; }
 					textOptions[optionIndex].setOutlineColor(sf::Color::White);
 					textOptions[optionIndex].setOutlineThickness(2.0f);
+					if (optionIndex != 1) { displayHighscore = false; }
 					continue;
 				case sf::Keyboard::Space:					
-					//if the player is on the button of "Play game then go straight to the game"
+					//if the player is on the button of "Play game then go straight to the game"	
 					if (optionIndex == 0)
-					{						
-						m_currentState = EGameState::eRunGame;																								
+					{
+						m_currentState = EGameState::eRunGame;
 						break;
 					}
+					else if (optionIndex == 1) { displayHighscore = true; }				
 					continue;
 				default:
 					continue;
@@ -520,7 +552,8 @@ void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
 		{
 			argWindow.draw(textOptions[i]);
 		}
-
+		if (displayHighscore) { argWindow.draw(textHighscore); }
+		argWindow.draw(textControls);
 		// Get the window to display its contents
 		argWindow.display();		
 	}
@@ -530,16 +563,25 @@ bool Game::DisplayGameOver(sf::RenderWindow & argWindow)
 {
 	bool isPlayingAgain = false;
 	int topScore{-1};	
-	int playerNumber{ 0 };
-	int winnerNumber{0};
-	sf::Color winnerColor{ sf::Color::White };
+	bool newHighscore{ false };
+
 	//Declare and load a font
 	sf::Font font;
-	//it has a problem loading the text!!
 	if (!font.loadFromFile("PressStart2P.ttf"))
 	{
 		std::cout << "Error loading the font file." << std::endl;
 	}
+	//Open Highscore text
+	std::ifstream readFile;
+	readFile.open("Highscore.txt");
+	if (readFile.is_open())
+	{
+		while (!readFile.eof())
+		{
+			readFile >> topScore;
+		}
+	}
+	readFile.close();	
 
 	//Create a textTite
 	sf::Text textTitle;
@@ -548,29 +590,50 @@ bool Game::DisplayGameOver(sf::RenderWindow & argWindow)
 	textTitle.setCharacterSize(30);
 	textTitle.setStyle(sf::Text::Regular);
 	textTitle.setFillColor(sf::Color::Red);
-	textTitle.setPosition(200.0f, 50.0f);
+	textTitle.setPosition(250.0f, 50.0f);
+
+	//Check for a new highscore
+	std::ofstream writeFile("Highscore.txt");	
+	sf::Text textHighscoreInfo;
+	textHighscoreInfo.setFont(font);
+	textHighscoreInfo.setString("New highscore!");
+	textHighscoreInfo.setCharacterSize(30);
+	textHighscoreInfo.setStyle(sf::Text::Regular);
+	textHighscoreInfo.setFillColor(sf::Color::Yellow);
+	textHighscoreInfo.setPosition(200.0f, 90.0f);
+
+	sf::Text textHighscoreNumber;
+	textHighscoreNumber.setFont(font);
+	textHighscoreNumber.setCharacterSize(30);
+	textHighscoreNumber.setStyle(sf::Text::Regular);
+	textHighscoreNumber.setFillColor(sf::Color::Green);
+	textHighscoreNumber.setPosition(200.0f, 250.0f);
+
+	//Create a text for the player score
+	sf::Text textScore;
+	textScore.setFont(font);	
+	textScore.setCharacterSize(30);
+	textScore.setStyle(sf::Text::Regular);
+	textScore.setFillColor(sf::Color::Green);
+	/*textTopScore.setOutlineColor(sf::Color::White);
+	textTopScore.setOutlineThickness(2.0f);*/
+	textScore.setPosition(200.0f, 200.0f);
 
 	for (Frog* player : FrogPlayerList)
 	{	
-		if (player->GetScore() > topScore)
+		if (writeFile.is_open())
 		{
-			topScore = player->GetScore();	
-			winnerNumber = playerNumber;
-			winnerColor = sf::Color::Green;
+			if (player->GetScore() > topScore)
+			{
+				topScore = player->GetScore();	
+				newHighscore = true;
+			}
+			writeFile << topScore;
+			textHighscoreNumber.setString("Highscore: " + std::to_string(topScore));
+			textScore.setString("P1 Score: " + std::to_string(player->GetScore()));
 		}
-		playerNumber++;
-		//also you will have to display which Frog had the top score
-	}
-	//Create a text for the highest score
-	sf::Text textTopScore;
-	textTopScore.setFont(font);
-	textTopScore.setString("Top Score: P" + std::to_string(winnerNumber + 1) + " " + std::to_string(topScore));
-	textTopScore.setCharacterSize(30);
-	textTopScore.setStyle(sf::Text::Regular);
-	textTopScore.setFillColor(winnerColor);
-	/*textTopScore.setOutlineColor(sf::Color::White);
-	textTopScore.setOutlineThickness(2.0f);*/
-	textTopScore.setPosition(200.0f, 200.0f);
+		writeFile.close();
+	}	
 
 	//Create a textIndication
 	sf::Text textIndication;
@@ -579,7 +642,7 @@ bool Game::DisplayGameOver(sf::RenderWindow & argWindow)
 	textIndication.setCharacterSize(18);
 	textIndication.setStyle(sf::Text::Regular);
 	textIndication.setFillColor(sf::Color(255, 165, 0));	//This is orange
-	textIndication.setPosition(50.0f, 350.0f);
+	textIndication.setPosition(50.0f, 450.0f);
 
 	//create a textExit
 	sf::Text textExit;
@@ -588,7 +651,7 @@ bool Game::DisplayGameOver(sf::RenderWindow & argWindow)
 	textExit.setCharacterSize(18);
 	textExit.setStyle(sf::Text::Regular);
 	textExit.setFillColor(sf::Color(255, 165, 0));
-	textExit.setPosition(100.0f, 450.0f);
+	textExit.setPosition(150.0f, 550.0f);
 
 	while (argWindow.isOpen())
 	{
@@ -632,7 +695,9 @@ bool Game::DisplayGameOver(sf::RenderWindow & argWindow)
 
 		//Draw the text
 		argWindow.draw(textTitle);
-		argWindow.draw(textTopScore);
+		argWindow.draw(textScore);
+		if (newHighscore) { argWindow.draw(textHighscoreInfo); }
+		argWindow.draw(textHighscoreNumber);
 		argWindow.draw(textIndication);
 		argWindow.draw(textExit);
 

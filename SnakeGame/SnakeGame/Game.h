@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "AI.h"
 #include <list>
+#include <fstream>
 
 enum class EGameState
 {
