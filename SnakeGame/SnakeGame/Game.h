@@ -40,13 +40,16 @@ public:
 	~Game();
 	void ChangeState(bool& argPlayGame);
 
-	//Consider the enum for the different screen modes (main menu, game, game over)
 	void Run(sf::RenderWindow &argWindow);
-	void SpawnNewObject(int spawnDistance);
+	template<class T>
+	void ObjectFrameCycle(sf::RenderWindow& argWindow, std::list<T> &ObjectList);
+	template<class T>
+	void SpawnNewObject(int spawnDistance, std::list<T> &ObjectList);
 	void InitialObjectSpawn();
 	void CreatePoolOfObjects(sf::Texture& texture);
 
 	void DisplayMainMenu(sf::RenderWindow &argWindow);
+	void CreateText(sf::Text& argText, const sf::Font& argFont, const sf::String& argString, const int& argCharSize, const sf::Color& argColor, const sf::Vector2f& argPosition);
 	bool DisplayGameOver(sf::RenderWindow &argWindow);
 	
 	void NewPlayer(std::list<Frog*> &argFrogPlayerList, const int& playerNumber, const sf::Texture &argTexture);

@@ -58,7 +58,7 @@ float RiverItem::GetSpeed()
 	return speed;
 }
 
-void RiverItem::SpawnRiverItem(const std::list<RiverItem*>& argRiverItemList, const float& argSpawnDistance)
+void RiverItem::Spawn(const std::list<RiverItem*>& argRiverItemList, const float& argSpawnDistance)
 {
 	//all vehicles are spawning at the same time
 	bool canSpawn{ false };

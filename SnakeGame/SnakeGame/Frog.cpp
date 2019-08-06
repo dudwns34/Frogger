@@ -1,7 +1,7 @@
 #include "Frog.h"
 
-Frog::Frog(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions) :
-	Shape(argScreenPos, argIsAlive, argSprite, argDimensions)
+Frog::Frog(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions, const sf::Color& argColour) :
+	Shape(argScreenPos, argIsAlive, argSprite, argDimensions), Colour(argColour)
 {
 }
 
@@ -122,7 +122,12 @@ void Frog::Update(const sf::Vector2f& argScreenPos, sf::RenderWindow& argWindow,
 void Frog::LoseALife()
 {
 	Lives -= 1;
-	screenPos = { 400.0f, 500.0f };
+	if (Colour == sf::Color::Green)
+		screenPos = { 200.0f, 500.0f };
+	else if (Colour == sf::Color::Cyan)
+		screenPos = { 400.0f, 500.0f };
+	else if (Colour == sf::Color::Yellow)
+		screenPos = { 600.0f, 500.0f };
 }
 
 void Frog::GameOver(sf::RenderWindow& argWindow)
@@ -143,6 +148,11 @@ int Frog::GetScore()
 int Frog::GetLives()
 {
 	return Lives;
+}
+
+sf::Color Frog::GetColor()
+{
+	return Colour;
 }
 
 void Frog::DoAnimation()

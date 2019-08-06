@@ -12,7 +12,7 @@ private:
 	bool isAvoidingDeath{ false };	
 
 public:
-	AI(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions);
+	AI(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions, const sf::Color& argColour);
 	~AI();
 	void Move() override;
 	void SelectClosestFood(Food &argFoodIndividual, const int& argFoodID) override;	

@@ -22,10 +22,11 @@ protected:
 	bool isDrowning{ false };
 	int Score{ 0 };
 	int Lives{ 3 };
+	sf::Color Colour;
 	EDirection direction = EDirection::eNorth;
 
 public:
-	Frog(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions);
+	Frog(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions, const sf::Color& argColour);
 	~Frog();
 	virtual void Render(sf::RenderWindow& argWindow) override;
 
@@ -36,6 +37,7 @@ public:
 	virtual void NewSegment(const int &argFoodValue);
 	int GetScore();	
 	int GetLives();
+	sf::Color GetColor();
 
 	void DoAnimation();
 	void ChangeToWaterSprite();

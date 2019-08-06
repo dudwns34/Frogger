@@ -61,7 +61,7 @@ EVehicleType Vehicle::GetVehicleType()
 	return vehicleType;
 }
 
-void Vehicle::SpawnVehicle(const std::list<Vehicle*>& argVehicleList, const float& argSpawnDistance)
+void Vehicle::Spawn(const std::list<Vehicle*>& argVehicleList, const float& argSpawnDistance)
 {
 	//all vehicles are spawning at the same time
 	bool canSpawn{ false };

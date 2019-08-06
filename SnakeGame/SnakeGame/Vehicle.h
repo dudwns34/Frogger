@@ -24,5 +24,5 @@ public:
 	void Move();
 	void Update(const sf::Vector2f& argScreenPos);
 	EVehicleType GetVehicleType();	
-	void SpawnVehicle(const std::list<Vehicle*>& argVehicleList, const float& argSpawnDistance);
+	void Spawn(const std::list<Vehicle*>& argVehicleList, const float& argSpawnDistance);
 };

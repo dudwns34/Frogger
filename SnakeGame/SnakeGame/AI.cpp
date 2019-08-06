@@ -2,8 +2,8 @@
 
 
 
-AI::AI(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions) :
-	Frog(argScreenPos, argIsAlive, argSprite, argDimensions)
+AI::AI(const sf::Vector2f& argScreenPos, const bool& argIsAlive, const sf::Sprite& argSprite, const sf::Vector2f& argDimensions, const sf::Color& argColour) :
+	Frog(argScreenPos, argIsAlive, argSprite, argDimensions, argColour)
 {
 }
 
