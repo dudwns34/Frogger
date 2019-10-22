@@ -26,6 +26,7 @@ private:
 	sf::Clock masterClock;
 	sf::Clock timeClock;
 	int TimeLeft{ 100 };
+	int noOfPlayers{ 0 };
 
 	bool areAllDead{ false };
 

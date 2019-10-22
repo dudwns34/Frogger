@@ -41,9 +41,9 @@ void Game::Run(sf::RenderWindow &argWindow)
 	
 	masterClock.restart();
 	timeClock.restart();
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < noOfPlayers; i++)
 	{
-		//Add a new player frog. One for now
+		//Add a new player frog.
 		NewPlayer(FrogPlayerList, i, texture);
 	}
 
@@ -500,9 +500,12 @@ void Game::DisplayMainMenu(sf::RenderWindow &argWindow)
 					continue;
 				case sf::Keyboard::Space:					
 					//if the player is on the button of "Play game then go straight to the game"	
-					if (optionIndex == 0)
+					if (optionIndex != 3)
 					{
 						m_currentState = EGameState::eRunGame;
+						if (optionIndex == 0) { noOfPlayers = 1; }
+						else if (optionIndex == 1) { noOfPlayers = 2; }
+						else if (optionIndex == 2) { noOfPlayers = 3; }
 						break;
 					}									
 					else if (optionIndex == 3) { displayHighscore = true; }				
@@ -644,7 +647,6 @@ bool Game::DisplayGameOver(sf::RenderWindow & argWindow)
 				case sf::Keyboard::Space:
 					isPlayingAgain = true;
 					m_currentState = EGameState::eMainMenu;
-					//reset values. consider also resetting the water level. 
 					for (Frog* player : FrogPlayerList)
 					{
 						delete player;
